@@ -119,7 +119,7 @@ This project is a fork of the [`HfArgparser`](https://github.com/huggingface/tra
 
 - Supporting aliases for command line flags
 - Supporting reading of arguments from a config file specified via the command line 
-- Easy specfiication of choices via `Literal` and `Choice`
+- Easy specification of choices via `Literal` and `Choice`
 - Supporting mixed types for `Literal` and `Enum` arguments
 - Supporting nested `list` and `Choice`
 - Enriching the help message with type information and more
