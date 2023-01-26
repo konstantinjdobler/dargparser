@@ -18,7 +18,7 @@ from dargparser import dargparse, dArg, Choice
 
 @dataclass
 class Args:
-    learning_rate: float = dArg(help="Required argument (no default).")
+    learning_rate: float = dArg(aliases="--lr", help="Required argument (no default).")
     data_path: str = dArg(default="./data/", aliases=["--data", "-d"])
     extra_data: str | None = dArg(default=None)
     epochs: int = dArg(default=42)
@@ -33,7 +33,7 @@ args.<...>  # <-- this now has typehints and contains the values passed in via t
 Everything can be defined in a single place and you get strong typing of your arguments for free! Using the example above:
 ```python
 # Calling your script form the command line with these arguments:
-example_cmd_args =  "--learning_rate 1e-4 -d ./special-data/ --epochs 1 --precision 16 --some_list_arg 0 1 42"
+example_cmd_args =  "--lr 1e-4 -d ./special-data/ --epochs 1 --precision 16 --some_list_arg 0 1 42"
 
 # would produce these values for `args`
 Args(learning_rate=0.0001, data_path='./special-data/', extra_data=None, epochs=1, cuda=True, precision=16, some_list_arg=[0, 1, 42])
