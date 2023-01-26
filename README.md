@@ -1,7 +1,5 @@
 # dargparser - the typed argparser with dataclasses
 
----
-
 ## Quickstart
 
 Install `dargparser` with:
