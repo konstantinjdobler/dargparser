@@ -118,4 +118,12 @@ Some of these changes have already been contributed back upstream.
 
 This code is distributed under the Apache 2.0 license, without restricting any rights by the HuggingFace team.
 
-
+You can cite this software as:
+```
+@software{dobler2023dargparser,
+  author = {Dobler, Konstantin},
+  year = {2023},
+  title = {dargparser},
+  url = {https://github.com/konstantinjdobler/dargparser},
+}
+```
