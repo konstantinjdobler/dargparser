@@ -114,7 +114,7 @@ This project is a fork of the [`HfArgparser`](https://github.com/huggingface/tra
 - Supporting modern typing patterns such as builtin types (`list[int]` vs. `typing.List[int]`) and Optional (`str | None` vs. `typing.Optional[str]`)
 - Fixing some type hint issues for VSCode
 
-Some of these change shave already been contributed back upstream.
+Some of these changes have already been contributed back upstream.
 
 This code is distributed under the Apache 2.0 license, without restricting any rights by the HuggingFace team.
 
