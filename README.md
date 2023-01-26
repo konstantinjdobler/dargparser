@@ -24,6 +24,7 @@ class Args:
     epochs: int = dArg(default=42)
     cuda: bool = dArg(default=True, help="We automatically create a `--no_<arg>` flag for bools.")
     precision: Choice[32, 16, 8, "bf16", "tf32"] = dArg(default=32, help="Choices with mixed types are supported.")
+    some_list_arg: list[int] = dArg(default=[1, 2, 3])
 
 args = dargparse(Args)
 args.<...>  # <-- this now has typehints and contains the values passed in via the command line
@@ -37,14 +38,21 @@ Everything can be defined in a single place and you get strong typing of your ar
 
 
 **List args**
-You can easily specify `list` arguments as follows (behavior is similar to `argparse`'s `nargs="+"`). To specifiy default values, use the `default_factory` argument instead of `default`.
-
+You can easily specify arguments that take multiple values as follows (behavior is similar to `argparse`'s `nargs="+"`). Note that the default values should also be lists in this case.
 ```python
 @dataclass
 class Args:
     required_list: list[int] = dArg(help="Required.")
-    empty_default_list: list[int] = dArg(default_factory=list, help="Empty list as default.")
-    custom_default_list: list[int] = dArg(default_factory=lambda: [1, 2, 3])
+    empty_default_list: list[int] = dArg(default=[], help="Empty list as default.")
+    custom_default_list: list[int] = dArg(default=[1, 2, 3])
+```
+
+**List + Choice combindation**
+You can combine `list` and `Choice` to allow the selection of an arbitrary number of values from a predefined set.
+```python
+@dataclass
+class Args:
+    datasets: list[Choice["mnist", "cifar10", "imagenet"]] = dArg(default=["mnist", "cifar10"])
 ```
 
 **Config files**
@@ -101,6 +109,7 @@ This project is a fork of the `HfArgparser` from the HuggingFace `transformers` 
 - Supporting reading of arguments from a config file specified via the command line 
 - Easy specfiication of choices via `Literal` and `Choice`
 - Supporting mixed types for `Literal` and `Enum` arguments
+- Supporting nested `list` and `Choice`
 - Enriching the help message with type information and more
 - Supporting modern typing patterns such as builtin types (`list[int]` vs. `typing.List[int]`) and Optional (`str | None` vs. `typing.Optional[str]`)
 - Fixing some type hint issues for VSCode

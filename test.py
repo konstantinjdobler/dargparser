@@ -23,6 +23,10 @@ class Args:
     eor: str | None = dArg(default=None)
     inti: int | None = dArg(default=None)
     qdq: Choice[42, "wer", None] = dArg(default=42)
+    hackyl: list[int] = dArg(default=[2,3])
+    listw: list[Choice["mnist", "cifar10", "imagenet"]] = dArg(default=["mnist", "cifar10"])
+
+
 
 
 def main(args: Args):

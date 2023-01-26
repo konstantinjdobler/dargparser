@@ -111,7 +111,10 @@ def dArg(
         metadata["aliases"] = aliases
     if help is not None:
         metadata["help"] = help
-
+    if isinstance(default, list):
+        default_copy = copy(default)
+        default_factory = lambda: default_copy
+        default = dataclasses.MISSING
     return dataclasses.field(metadata=metadata, default=default, default_factory=default_factory, **kwargs)
 
 
@@ -217,7 +220,7 @@ class dArgParser(ArgumentParser):
             # Hack because type=bool in argparse does not behave as we want.
             kwargs["type"] = string_to_bool
 
-            type_str = "bool: y, n, or empty"
+            type_str = "BOOL"
             if field.type is bool or (field.default is not None and field.default is not dataclasses.MISSING):
                 # Default value is False if we have no default when of type bool.
                 default = False if field.default is dataclasses.MISSING else field.default
@@ -229,12 +232,20 @@ class dArgParser(ArgumentParser):
                 kwargs["const"] = True
         elif isclass(origin_type) and issubclass(origin_type, list):
             kwargs["type"] = field.type.__args__[0]
+            type_str = kwargs["type"].__name__.upper() 
+
             kwargs["nargs"] = "+"
             if field.default_factory is not dataclasses.MISSING:
                 kwargs["default"] = field.default_factory()
             elif field.default is dataclasses.MISSING:
                 kwargs["required"] = True
-            type_str = kwargs["type"].__name__
+                        
+            # Support nested Choice/Literal in list
+            if getattr(kwargs["type"] , "__origin__", kwargs["type"]) is Literal:
+                kwargs["choices"] = kwargs["type"].__args__
+                kwargs["type"] = make_choice_type_function(kwargs["choices"])
+                type_str = str(set(kwargs["choices"]))
+
         else:
             kwargs["type"] = field.type
             if field.default is not dataclasses.MISSING:
@@ -243,7 +254,7 @@ class dArgParser(ArgumentParser):
                 kwargs["default"] = field.default_factory()
             else:
                 kwargs["required"] = True
-            type_str = field.type.__name__
+            type_str = field.type.__name__.upper()
 
         kwargs["help"] = kwargs.get("help", ArgumentDefaultsLongHelpFormatter.DEFAULT_PLACEHOLDER)
         parser.add_argument(field_name, *aliases, **kwargs, metavar=type_str)
@@ -360,7 +371,7 @@ class dArgParser(ArgumentParser):
             return (*outputs, remaining_args)
         else:
             if remaining_args:
-                raise ValueError(f"Some specified arguments are not used by the HfArgumentParser: {remaining_args}")
+                raise ValueError(f"Some specified arguments are not used by dargparse: {remaining_args}")
 
             return (*outputs,)
 
