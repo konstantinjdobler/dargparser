@@ -30,14 +30,28 @@ args = dargparse(Args)
 args.<...>  # <-- this now has typehints and contains the values passed in via the command line
 ```
 
-Everything can be defined in a single place and you get strong typing of your arguments for free!
+Everything can be defined in a single place and you get strong typing of your arguments for free! Using the example above:
+```python
+# Calling your script form the command line with these arguments:
+example_cmd_args =  "--learning_rate 1e-4 -d ./special-data/ --epochs 1 --precision 16 --some_list_arg 0 1 42"
+
+# would produce these values for `args`
+Args(learning_rate=0.0001, data_path='./special-data/', extra_data=None, epochs=1, cuda=True, precision=16, some_list_arg=[0, 1, 42])
+```
 
 <details> 
 <summary><b>Advanced Usage</b></summary>
 <p>
 
+**Required arguments** without a default value, alias or help text do not need `dArg`:
+```python
+@dataclass
+class Args:
+    learning_rate: float
+    ...
+```
 
-**List args**
+**List args:**
 You can easily specify arguments that take multiple values as follows (behavior is similar to `argparse`'s `nargs="+"`). Note that the default values should also be lists in this case.
 ```python
 @dataclass
@@ -47,7 +61,7 @@ class Args:
     custom_default_list: list[int] = dArg(default=[1, 2, 3])
 ```
 
-**List + Choice combindation**
+**List + Choice combindation:**
 You can combine `list` and `Choice` to allow the selection of an arbitrary number of values from a predefined set.
 ```python
 @dataclass
@@ -55,7 +69,7 @@ class Args:
     datasets: list[Choice["mnist", "cifar10", "imagenet"]] = dArg(default=["mnist", "cifar10"])
 ```
 
-**Config files**
+**Config files:**
 We support optionally reading arguments from a config file. By default, we read a config file specified in the CLI via the `"--cfg"` flag. The file is expected to contain lines of single flag-argument pairs, like you would specify them in the command line:
 ```txt
 --argument value
@@ -75,7 +89,7 @@ class Args:
 
 args = dargparse(Args, config_flag="--config")
 ```
-**Multiple dataclasses**
+**Multiple dataclasses:**
 To seperate concerns, you can split your arguments into multiple `dataclasses`, e.g. `TrainingArgs`, `ModelArgs`, and `DataArgs`.
 
 ```python
@@ -97,8 +111,6 @@ class DataArgs:
 # the arguments parsed from the CLI are now split into the respective variables
 training_args, model_args, data_args = dargparse(TrainingArgs, ModelArgs, DataArgs)
 ```
-
-
 </details>
 
 ## Formalities
