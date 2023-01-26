@@ -68,7 +68,7 @@ class Args:
 args = dargparse(Args, config_flag="--config")
 ```
 **Multiple dataclasses**
-To seperate concerns, you can split your arguments into multiple `dataclasses`, e.g. `TrainingArgs`, `ModelArgs`, and `LoggingArgs`.
+To seperate concerns, you can split your arguments into multiple `dataclasses`, e.g. `TrainingArgs`, `ModelArgs`, and `DataArgs`.
 
 ```python
 @dataclass
