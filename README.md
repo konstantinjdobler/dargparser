@@ -1,5 +1,5 @@
 # dargparser - the typed argparser with dataclasses
-
+A lean typed argument parser based on dataclasses. Used for deep learning research and everything else.
 ## Quickstart
 
 Install `dargparser` with:
