@@ -103,7 +103,7 @@ training_args, model_args, data_args = dargparse(TrainingArgs, ModelArgs, DataAr
 
 ## Formalities
 
-This project is a fork of the `HfArgparser` from the HuggingFace `transformers` repository, with added features such as:
+This project is a fork of the [`HfArgparser`](https://github.com/huggingface/transformers/blob/fd0ef8b66d957ac0fc94d715262dca1a6005a5ed/src/transformers/hf_argparser.py) from the HuggingFace `transformers` repository, with added features such as:
 
 - Supporting aliases for command line flags
 - Supporting reading of arguments from a config file specified via the command line 
