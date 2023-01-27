@@ -13,17 +13,12 @@
 # limitations under the License.
 
 import argparse
-import json
-import os
-import tempfile
 import unittest
 from argparse import Namespace
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
 from typing import List, Optional
 
-import yaml
 from src.dargparser import dArgParser
 from src.dargparser.helpers import make_choice_type_function, string_to_bool
 
