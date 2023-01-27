@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
+
+[tool.black]
+line-length = 128
+target-version = ['py310']
+
