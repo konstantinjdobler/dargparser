@@ -31,10 +31,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Pre-install setuptools_scm 
+        run: python3 -m pip install --upgrade setuptools_scm
       - name: Set a PyPI compatible setuptools_scm pretend version
         # Required for continuously deploying to Test PyPI when we have commits not part of a tag/release
         # See https://github.com/pypa/setuptools_scm/issues/478
-        run: python3 -m pip install --upgrade setuptools_scm
         run: |
           from setuptools_scm import get_version
           real_version = get_version()
