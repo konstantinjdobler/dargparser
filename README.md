@@ -1,6 +1,6 @@
 # dargparser - the typed argparser with dataclasses
 
-![Build Status](https://github.com/konstantinjdobler/dargparser/actions/workflows/publish_to_test_pypi.yml/badge.svg?branch=main)
+![Build Status](https://github.com/konstantinjdobler/dargparser/actions/workflows/test_publish.yml/badge.svg?branch=main)
 
 A lean and hackable typed argument parser based on dataclasses. For deep learning research and everything else.
 
