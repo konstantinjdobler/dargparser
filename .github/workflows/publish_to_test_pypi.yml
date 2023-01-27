@@ -42,7 +42,7 @@ jobs:
         run: |
           from setuptools_scm import get_version
           real_version = get_version()
-          pretend_version = get_version(local_scheme='no-local-version')
+          pretend_version = get_version(local_scheme='no-local-version', version_scheme='post-release')
           if pretend_version != real_version:
             print(f'Setting SETUPTOOLS_SCM_PRETEND_VERSION to {pretend_version} instead of using version {real_version}')
             print(f'::set-env name=SETUPTOOLS_SCM_PRETEND_VERSION::{pretend_version}')
