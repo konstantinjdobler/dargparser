@@ -1,4 +1,4 @@
-name: Run tests and publish to test.PyPI.org
+name: CI
 on:
   push:
     branches: [main]

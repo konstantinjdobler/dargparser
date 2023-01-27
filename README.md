@@ -1,5 +1,9 @@
 # dargparser - the typed argparser with dataclasses
+
+![Build Status](https://github.com/konstantinjdobler/dargparser/actions/workflows/publish_to_test_pypi.yml/badge.svg?branch=main)
+
 A lean and hackable typed argument parser based on dataclasses. For deep learning research and everything else.
+
 ## Quickstart
 
 Install `dargparser` with:
@@ -31,6 +35,7 @@ args.<...>  # <-- this now has typehints and contains the values passed in via t
 ```
 
 Everything can be defined in a single place and you get strong typing of your arguments for free! Using the example above:
+
 ```python
 # Calling your script from the command line with these arguments...
 example_cmd_args = "--lr 1e-4 -d ./special-data/ --epochs 1 --precision 16 --some_list_arg 0 1 42"
@@ -41,11 +46,12 @@ Args(learning_rate=0.0001, data_path='./special-data/', extra_data=None, epochs=
 
 <p>
 
-<details> 
+<details>
 <summary><b>Advanced Usage</b></summary>
 <p>
 
 **Required arguments** without a default value, alias or help text do not need `dArg`:
+
 ```python
 @dataclass
 class Args:
@@ -55,6 +61,7 @@ class Args:
 
 **List args:**
 You can easily specify arguments that take multiple values as follows (behavior is similar to `argparse`'s `nargs="+"`). Note that the default values should also be lists in this case.
+
 ```python
 @dataclass
 class Args:
@@ -65,6 +72,7 @@ class Args:
 
 **List + Choice combindation:**
 You can combine `list` and `Choice` to allow the selection of an arbitrary number of values from a predefined set.
+
 ```python
 @dataclass
 class Args:
@@ -73,15 +81,17 @@ class Args:
 
 **Config files:**
 We support optionally reading arguments from a config file. By default, we read a config file specified in the CLI via the `"--cfg"` flag. The file is expected to contain lines of single flag-argument pairs, like you would specify them in the command line:
+
 ```txt
 --argument value
 --argument_two 42
 --list_argument item1 item2 item3
 ```
 
-If an argument is present in the config file and also specified via the CLI, we prefer the value in the CLI. 
+If an argument is present in the config file and also specified via the CLI, we prefer the value in the CLI.
 
 You can also use a different flag (e.g. `"--config"`) if you like.
+
 ```python
 from dargparser import dargparse, dArg
 
@@ -91,6 +101,7 @@ class Args:
 
 args = dargparse(Args, config_flag="--config")
 ```
+
 **Multiple dataclasses:**
 To seperate concerns, you can split your arguments into multiple `dataclasses`, e.g. `TrainingArgs`, `ModelArgs`, and `DataArgs`.
 
@@ -113,6 +124,7 @@ class DataArgs:
 # the arguments parsed from the CLI are now split into the respective variables
 training_args, model_args, data_args = dargparse(TrainingArgs, ModelArgs, DataArgs)
 ```
+
 </details>
 
 ## Formalities
@@ -120,7 +132,7 @@ training_args, model_args, data_args = dargparse(TrainingArgs, ModelArgs, DataAr
 This project is a fork of the [`HfArgparser`](https://github.com/huggingface/transformers/blob/fd0ef8b66d957ac0fc94d715262dca1a6005a5ed/src/transformers/hf_argparser.py) from the HuggingFace `transformers` repository, with added features such as:
 
 - Supporting aliases for command line flags
-- Supporting reading of arguments from a config file specified via the command line 
+- Supporting reading of arguments from a config file specified via the command line
 - Easy specification of choices via `Literal` and `Choice`
 - Supporting mixed types for `Literal` and `Enum` arguments
 - Supporting nested `list` and `Choice`
