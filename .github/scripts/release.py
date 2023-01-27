@@ -1,15 +1,7 @@
 #!/usr/bin/env python3
 import json
 import subprocess
-from dataclasses import dataclass
-from dargparser import dargparse, dArg
-
-
-@dataclass
-class Args:
-    major: bool = dArg(default=False, help="Create a new major release.")
-    minor: bool = dArg(default=False, help="Create a new minor release.")
-    patch: bool = dArg(default=True, help="Create a new patch release.")
+import argparse
 
 
 def get_last_version() -> str:
@@ -46,7 +38,7 @@ def bump_patch_number(version_number: str) -> str:
     return f"v{major}.{minor}.{int(patch) + 1}"
 
 
-def create_new_release(args: Args):
+def create_new_release(args):
     """Create a new patch release on GitHub."""
     try:
         last_version_number = get_last_version()
@@ -71,5 +63,11 @@ def create_new_release(args: Args):
 
 
 if __name__ == "__main__":
-    args = dargparse(dataclasses=Args)
+    # Use argparse instead of dargparse because this script is used by the CI
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--major", action="store_true")
+    parser.add_argument("--minor", action="store_true")
+    parser.add_argument("--patch", action="store_true")
+
+    args = parser.parse_args()
     create_new_release(args)
