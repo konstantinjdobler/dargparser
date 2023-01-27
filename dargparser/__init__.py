@@ -1,1 +1,1 @@
-from .parsing import dargparse, dArg, dArgParser, Choice
+from dargparser.parsing import dargparse, dArg, dArgParser, Choice
