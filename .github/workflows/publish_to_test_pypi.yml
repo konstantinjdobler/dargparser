@@ -34,6 +34,8 @@ jobs:
       - name: Pre-install setuptools_scm 
         run: python3 -m pip install --upgrade setuptools_scm
       - name: Set a PyPI compatible setuptools_scm pretend version
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         # Required for continuously deploying to Test PyPI when we have commits not part of a tag/release
         # See https://github.com/pypa/setuptools_scm/issues/478
         run: |
