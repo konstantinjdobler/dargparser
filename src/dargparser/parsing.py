@@ -24,7 +24,7 @@ from pathlib import Path
 import types
 from typing import Any, Callable, Dict, Iterable, List, NewType, Optional, Tuple, TypeVar, Union, get_type_hints
 
-from dargparser.helpers import ArgumentDefaultsLongHelpFormatter, string_to_bool, make_choice_type_function
+from src.dargparser.helpers import ArgumentDefaultsLongHelpFormatter, string_to_bool, make_choice_type_function
 
 try:
     # For Python versions <3.8, Literal is not in typing: https://peps.python.org/pep-0586/
@@ -256,7 +256,6 @@ class dArgParser(ArgumentParser):
                 kwargs["required"] = True
             type_str = field.type.__name__.upper()
 
-        kwargs["help"] = kwargs.get("help", ArgumentDefaultsLongHelpFormatter.DEFAULT_PLACEHOLDER)
         parser.add_argument(field_name, *aliases, **kwargs, metavar=type_str)
 
         # Add a complement `no_*` argument for a boolean field AFTER the initial field has already been added.

@@ -24,8 +24,8 @@ from pathlib import Path
 from typing import List, Optional
 
 import yaml
-from transformers import HfArgumentParser, TrainingArguments
-from transformers.hf_argparser import make_choice_type_function, string_to_bool
+from src.dargparser import dArgParser
+from src.dargparser.helpers import make_choice_type_function, string_to_bool
 
 
 try:
@@ -124,15 +124,15 @@ class StringLiteralAnnotationExample:
     foo_str: "List[str]" = list_field(default=["Hallo", "Bonjour", "Hello"])
 
 
-class HfArgumentParserTest(unittest.TestCase):
+class dArgumentParserTest(unittest.TestCase):
     def argparsersEqual(self, a: argparse.ArgumentParser, b: argparse.ArgumentParser):
         """
         Small helper to check pseudo-equality of parsed arguments on `ArgumentParser` instances.
         """
         self.assertEqual(len(a._actions), len(b._actions))
         for x, y in zip(a._actions, b._actions):
-            xx = {k: v for k, v in vars(x).items() if k != "container"}
-            yy = {k: v for k, v in vars(y).items() if k != "container"}
+            xx = {k: v for k, v in vars(x).items() if k not in ["container", "metavar"]}
+            yy = {k: v for k, v in vars(y).items() if k not in ["container", "metavar"]}
 
             # Choices with mixed type have custom function as "type"
             # So we need to compare results directly for equality
@@ -144,7 +144,7 @@ class HfArgumentParserTest(unittest.TestCase):
             self.assertEqual(xx, yy)
 
     def test_basic(self):
-        parser = HfArgumentParser(BasicExample)
+        parser = dArgParser(BasicExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument("--foo", type=int, required=True)
@@ -158,7 +158,7 @@ class HfArgumentParserTest(unittest.TestCase):
         self.assertFalse(example.flag)
 
     def test_with_default(self):
-        parser = HfArgumentParser(WithDefaultExample)
+        parser = dArgParser(WithDefaultExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument("--foo", default=42, type=int)
@@ -166,7 +166,7 @@ class HfArgumentParserTest(unittest.TestCase):
         self.argparsersEqual(parser, expected)
 
     def test_with_default_bool(self):
-        parser = HfArgumentParser(WithDefaultBoolExample)
+        parser = dArgParser(WithDefaultBoolExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument("--foo", type=string_to_bool, default=False, const=True, nargs="?")
@@ -193,7 +193,7 @@ class HfArgumentParserTest(unittest.TestCase):
         self.assertEqual(args, Namespace(foo=False, baz=False, opt=False))
 
     def test_with_enum(self):
-        parser = HfArgumentParser(MixedTypeEnumExample)
+        parser = dArgParser(MixedTypeEnumExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument(
@@ -224,7 +224,7 @@ class HfArgumentParserTest(unittest.TestCase):
         class LiteralExample:
             foo: Literal["titi", "toto", 42] = "toto"
 
-        parser = HfArgumentParser(LiteralExample)
+        parser = dArgParser(LiteralExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument(
@@ -245,7 +245,7 @@ class HfArgumentParserTest(unittest.TestCase):
         self.assertEqual(args.foo, 42)
 
     def test_with_list(self):
-        parser = HfArgumentParser(ListExample)
+        parser = dArgParser(ListExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument("--foo_int", nargs="+", default=[], type=int)
@@ -265,7 +265,7 @@ class HfArgumentParserTest(unittest.TestCase):
         self.assertEqual(args, Namespace(foo_int=[1], bar_int=[2, 3], foo_str=["a", "b", "c"], foo_float=[0.1, 0.7]))
 
     def test_with_optional(self):
-        parser = HfArgumentParser(OptionalExample)
+        parser = dArgParser(OptionalExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument("--foo", default=None, type=int)
@@ -282,7 +282,7 @@ class HfArgumentParserTest(unittest.TestCase):
         self.assertEqual(args, Namespace(foo=12, bar=3.14, baz="42", ces=["a", "b", "c"], des=[1, 2, 3]))
 
     def test_with_required(self):
-        parser = HfArgumentParser(RequiredExample)
+        parser = dArgParser(RequiredExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument("--required_list", nargs="+", type=int, required=True)
@@ -296,7 +296,7 @@ class HfArgumentParserTest(unittest.TestCase):
         self.argparsersEqual(parser, expected)
 
     def test_with_string_literal_annotation(self):
-        parser = HfArgumentParser(StringLiteralAnnotationExample)
+        parser = dArgParser(StringLiteralAnnotationExample)
 
         expected = argparse.ArgumentParser()
         expected.add_argument("--foo", type=int, required=True)
@@ -310,71 +310,3 @@ class HfArgumentParserTest(unittest.TestCase):
         expected.add_argument("--baz", default="toto", type=str, help="help message")
         expected.add_argument("--foo_str", nargs="+", default=["Hallo", "Bonjour", "Hello"], type=str)
         self.argparsersEqual(parser, expected)
-
-    def test_parse_dict(self):
-        parser = HfArgumentParser(BasicExample)
-
-        args_dict = {
-            "foo": 12,
-            "bar": 3.14,
-            "baz": "42",
-            "flag": True,
-        }
-
-        parsed_args = parser.parse_dict(args_dict)[0]
-        args = BasicExample(**args_dict)
-        self.assertEqual(parsed_args, args)
-
-    def test_parse_dict_extra_key(self):
-        parser = HfArgumentParser(BasicExample)
-
-        args_dict = {
-            "foo": 12,
-            "bar": 3.14,
-            "baz": "42",
-            "flag": True,
-            "extra": 42,
-        }
-
-        self.assertRaises(ValueError, parser.parse_dict, args_dict, allow_extra_keys=False)
-
-    def test_parse_json(self):
-        parser = HfArgumentParser(BasicExample)
-
-        args_dict_for_json = {
-            "foo": 12,
-            "bar": 3.14,
-            "baz": "42",
-            "flag": True,
-        }
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            temp_local_path = os.path.join(tmp_dir, "temp_json")
-            os.mkdir(temp_local_path)
-            with open(temp_local_path + ".json", "w+") as f:
-                json.dump(args_dict_for_json, f)
-            parsed_args = parser.parse_yaml_file(Path(temp_local_path + ".json"))[0]
-
-        args = BasicExample(**args_dict_for_json)
-        self.assertEqual(parsed_args, args)
-
-    def test_parse_yaml(self):
-        parser = HfArgumentParser(BasicExample)
-
-        args_dict_for_yaml = {
-            "foo": 12,
-            "bar": 3.14,
-            "baz": "42",
-            "flag": True,
-        }
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            temp_local_path = os.path.join(tmp_dir, "temp_yaml")
-            os.mkdir(temp_local_path)
-            with open(temp_local_path + ".yaml", "w+") as f:
-                yaml.dump(args_dict_for_yaml, f)
-            parsed_args = parser.parse_yaml_file(Path(temp_local_path + ".yaml"))[0]
-        args = BasicExample(**args_dict_for_yaml)
-        self.assertEqual(parsed_args, args)
-
-    def test_integration_training_args(self):
-        parser = HfArgumentParser(TrainingArguments)
-        self.assertIsNotNone(parser)

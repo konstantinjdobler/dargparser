@@ -31,12 +31,10 @@ def make_choice_type_function(choices: list) -> Callable[[str], Any]:
 
 
 class ArgumentDefaultsLongHelpFormatter(ArgumentDefaultsHelpFormatter):
-    DEFAULT_PLACEHOLDER = "DARGPARSE_DEFAULT"
-
     def __init__(self, prog) -> None:
         super().__init__(prog, max_help_position=48)
 
     def _get_help_string(self, action):
-        if action.help == ArgumentDefaultsLongHelpFormatter.DEFAULT_PLACEHOLDER:
+        if action.help == None:
             return "(default: %(default)s)"
         return super()._get_help_string(action)
