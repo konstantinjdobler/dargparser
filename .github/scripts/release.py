@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 import json
 import subprocess
+from dataclasses import dataclass
+from dargparser import dargparse, dArg
+
+
+@dataclass
+class Args:
+    major: bool = dArg(default=False, help="Create a new major release.")
+    minor: bool = dArg(default=False, help="Create a new minor release.")
+    patch: bool = dArg(default=True, help="Create a new patch release.")
 
 
 def get_last_version() -> str:
@@ -19,24 +28,41 @@ def get_last_version() -> str:
     return json.loads(json_string)["tagName"]
 
 
+def bump_major_number(version_number: str) -> str:
+    """Return a copy of `version_number` with the patch number incremented."""
+    major, minor, patch = version_number.lstrip("v").split(".")
+    return f"v{int(major) + 1}.0.0"
+
+
+def bump_minor_number(version_number: str) -> str:
+    """Return a copy of `version_number` with the patch number incremented."""
+    major, minor, patch = version_number.lstrip("v").split(".")
+    return f"v{major}.{int(minor) + 1}.0"
+
+
 def bump_patch_number(version_number: str) -> str:
     """Return a copy of `version_number` with the patch number incremented."""
-    major, minor, patch = version_number.split(".")
-    return f"{major}.{minor}.{int(patch) + 1}"
+    major, minor, patch = version_number.lstrip("v").split(".")
+    return f"v{major}.{minor}.{int(patch) + 1}"
 
 
-def create_new_patch_release():
+def create_new_release(args: Args):
     """Create a new patch release on GitHub."""
     try:
         last_version_number = get_last_version()
     except subprocess.CalledProcessError as err:
         if err.stderr.decode("utf8").startswith("HTTP 404:"):
             # The project doesn't have any releases yet.
-            new_version_number = "0.0.1"
+            new_version_number = "v0.1.0"
         else:
             raise
     else:
-        new_version_number = bump_patch_number(last_version_number)
+        if args.major:
+            new_version_number = bump_major_number(last_version_number)
+        if args.minor:
+            new_version_number = bump_minor_number(last_version_number)
+        if args.patch:
+            new_version_number = bump_patch_number(last_version_number)
 
     subprocess.run(
         ["gh", "release", "create", "--generate-notes", new_version_number],
@@ -45,4 +71,5 @@ def create_new_patch_release():
 
 
 if __name__ == "__main__":
-    create_new_patch_release()
+    args = dargparse(dataclasses=Args)
+    create_new_release(args)

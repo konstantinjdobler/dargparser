@@ -64,9 +64,9 @@ def dargparse(dataclasses: DataclassOrDataclassTuple, config_flag: str = "--cfg"
 
 def dArg(
     *,
+    default: Any = dataclasses.MISSING,
     aliases: Union[str, List[str]] = None,
     help: str = None,
-    default: Any = dataclasses.MISSING,
     default_factory: Callable[[], Any] = dataclasses.MISSING,
     metadata: dict = None,
     **kwargs,
@@ -88,16 +88,17 @@ def dArg(
     ```
 
     Args:
+        default (Any, optional):
+            Default value for the argument. If default and default_factory is not specified, the argument is required.
+            Defaults to dataclasses.MISSING.
         aliases (Union[str, List[str]], optional):
-            Single string or list of strings of aliases to pass on to argparse, e.g. `aliases=["--example", "-e"]`.
+            Single string or list of strings of aliases that can be used in the command line for this argument, e.g. `aliases=["--example", "-e"]`.
             Defaults to None.
         help (str, optional): Help string to pass on to argparse that can be displayed with --help. Defaults to None.
-        default (Any, optional):
-            Default value for the argument. If not default or default_factory is specified, the argument is required.
-            Defaults to dataclasses.MISSING.
         default_factory (Callable[[], Any], optional):
             The default_factory is a 0-argument function called to initialize a field's value. It is useful to provide
-            default values for mutable types, e.g. lists: `default_factory=list`. Mutually exclusive with `default=`.
+            default values for mutable types, although lists can just be provided with the `default=` keyword argument.
+            Mutually exclusive with `default=`.
             Defaults to dataclasses.MISSING.
         metadata (dict, optional): Further metadata to pass on to `dataclasses.field`. Defaults to None.
 
@@ -111,6 +112,8 @@ def dArg(
         metadata["aliases"] = aliases
     if help is not None:
         metadata["help"] = help
+        
+    # Catch list default values here and redirect to default_factory
     if isinstance(default, list):
         default_copy = copy(default)
         default_factory = lambda: default_copy
