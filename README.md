@@ -128,4 +128,4 @@ This project is a fork of the [`HfArgparser`](https://github.com/huggingface/tra
 
 Some of these changes have already been contributed back upstream.
 
-This code is distributed under the Apache 2.0 license, without restricting any rights by the HuggingFace team.
+This code is distributed under the Apache 2.0 license, without restricting any rights reserved by the HuggingFace team.
