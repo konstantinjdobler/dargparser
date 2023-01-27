@@ -38,6 +38,7 @@ jobs:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         # Required for continuously deploying to Test PyPI when we have commits not part of a tag/release
         # See https://github.com/pypa/setuptools_scm/issues/478
+        # Snippet from: https://github.com/abhilash1in/paperplane/blob/1dfda182dc8a70fe08fa2284ea63b434246c394b/.github/workflows/CI.yml#L72-L84
         run: |
           from setuptools_scm import get_version
           real_version = get_version()
