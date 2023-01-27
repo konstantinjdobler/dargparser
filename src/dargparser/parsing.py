@@ -21,7 +21,6 @@ from copy import copy
 from enum import Enum
 from inspect import isclass
 from pathlib import Path
-import types
 from typing import Any, Callable, Dict, Iterable, List, NewType, Optional, Tuple, TypeVar, Union, get_type_hints
 
 from src.dargparser.helpers import ArgumentDefaultsLongHelpFormatter, string_to_bool, make_choice_type_function
@@ -32,6 +31,13 @@ try:
 except ImportError:
     # For Python 3.7
     from typing_extensions import Literal
+
+try:
+    from types import UnionType
+except ImportError:
+    # For Python <3.10, UnionType and the associated X | Y syntax are not supported
+    # (https://docs.python.org/3/library/types.html#types.UnionType)
+    UnionType = "NotImplemented"
 
 
 Choice = Literal
@@ -109,7 +115,7 @@ def dArg(
         metadata["aliases"] = aliases
     if help is not None:
         metadata["help"] = help
-        
+
     # Catch list default values here and redirect to default_factory
     if isinstance(default, list):
         default_copy = copy(default)
@@ -179,7 +185,7 @@ class dArgParser(ArgumentParser):
                 # filter `NoneType` in Union (except for `Union[bool, NoneType]`)
                 field.type = field.type.__args__[0] if isinstance(None, field.type.__args__[1]) else field.type.__args__[1]
                 origin_type = getattr(field.type, "__origin__", field.type)
-        elif field.type.__class__ is types.UnionType:
+        elif field.type.__class__ is UnionType:
             # TODO: remove this hack and replace with native typing solution somehow
             individual_types = [t.strip() for t in str(field.type).split("|")]
             if len(individual_types) != 2 or not issubclass(type(None), field.type):
@@ -232,16 +238,16 @@ class dArgParser(ArgumentParser):
                 kwargs["const"] = True
         elif isclass(origin_type) and issubclass(origin_type, list):
             kwargs["type"] = field.type.__args__[0]
-            type_str = kwargs["type"].__name__.upper() 
+            type_str = kwargs["type"].__name__.upper()
 
             kwargs["nargs"] = "+"
             if field.default_factory is not dataclasses.MISSING:
                 kwargs["default"] = field.default_factory()
             elif field.default is dataclasses.MISSING:
                 kwargs["required"] = True
-                        
+
             # Support nested Choice/Literal in list
-            if getattr(kwargs["type"] , "__origin__", kwargs["type"]) is Literal:
+            if getattr(kwargs["type"], "__origin__", kwargs["type"]) is Literal:
                 kwargs["choices"] = kwargs["type"].__args__
                 kwargs["type"] = make_choice_type_function(kwargs["choices"])
                 type_str = str(set(kwargs["choices"]))
