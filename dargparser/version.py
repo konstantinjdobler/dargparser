@@ -1,19 +1,14 @@
 import sys
+from argparse import ArgumentParser
 from importlib.metadata import version
-from dataclasses import dataclass
-from dargparser import dargparse, dArg
 
-
-@dataclass
-class Args:
-    version: bool = dArg(
-        default=False,
-        help="Print version and exit.",
-        aliases=["-v"],
-    )
 
 def entry_point():
-    args = dargparse(dataclasses=Args)
+    parser = ArgumentParser()
+    parser.add_argument("-v", "--version", action="store_true")
+
+    args = parser.parse_args()
+
     if args.version:
         print(version("dargparser"))
         sys.exit()
