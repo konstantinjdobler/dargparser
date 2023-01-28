@@ -1,15 +1,19 @@
 # dargparser - the typed argparser with dataclasses
 
-![Build Status](https://github.com/konstantinjdobler/dargparser/actions/workflows/test_publish.yml/badge.svg?branch=main) ![Python Versions](https://img.shields.io/badge/dynamic/json?query=info.requires_python&label=python&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fdargparser%2Fjson) [![PyPI version](https://badge.fury.io/py/dargparser.svg)](https://badge.fury.io/py/dargparser) ![Code Style](https://img.shields.io/badge/code%20style-black-black)
+![Build Status](https://github.com/konstantinjdobler/dargparser/actions/workflows/test_publish.yml/badge.svg?branch=main) [![PyPI Version](https://img.shields.io/pypi/v/dargparser.svg)](https://pypi.python.org/pypi/dargparser) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/dargparser)](https://anaconda.org/conda-forge/dargparser) ![Supported Python Versions](https://img.shields.io/pypi/pyversions/dargparser) ![Code Size](https://img.shields.io/github/languages/code-size/konstantinjdobler/dargparser) ![Code Style](https://img.shields.io/badge/code%20style-black-black)
 
 A lean and hackable typed argument parser based on dataclasses. For deep learning research and everything else.
 
 ## Quickstart
 
-Install `dargparser` with:
+Install `dargparser` with `pip`:
 
 ```sh
 pip install dargparser
+```
+or `conda`/`mamba`:
+```sh
+conda install -c conda-forge dargparser
 ```
 
 ## Usage
@@ -31,7 +35,10 @@ class Args:
     some_list_arg: list[int] = dArg(default=[1, 2, 3])
 
 args = dargparse(Args)
-args.<...>  # <-- this now has typehints and contains the values passed in via the command line
+
+# `args` now contains the values passed in via the command line
+# `args` has type hints that VSCode (or PyCharm) will use for auto-completion
+args.learning_rate
 ```
 
 Everything can be defined in a single place and you get strong typing of your arguments for free! Using the example above:
