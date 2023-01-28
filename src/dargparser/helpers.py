@@ -1,5 +1,6 @@
-from typing import Any, Callable
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentTypeError
+from typing import Any, Callable
+
 
 # From https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
 def string_to_bool(v):

@@ -1,7 +1,7 @@
-from dataclasses import dataclass
 import sys
-from importlib.metadata import version
 from dataclasses import dataclass
+from importlib.metadata import version
+
 from .parsing import dArg, dargparse
 
 

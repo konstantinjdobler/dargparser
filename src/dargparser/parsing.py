@@ -21,9 +21,25 @@ from copy import copy
 from enum import Enum
 from inspect import isclass
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, NewType, Optional, Tuple, TypeVar, Union, get_type_hints
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    NewType,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+    get_type_hints,
+)
 
-from .helpers import ArgumentDefaultsLongHelpFormatter, string_to_bool, make_choice_type_function
+from .helpers import (
+    ArgumentDefaultsLongHelpFormatter,
+    make_choice_type_function,
+    string_to_bool,
+)
 
 try:
     # For Python versions <3.8, Literal is not in typing: https://peps.python.org/pep-0586/
@@ -119,7 +135,7 @@ def dArg(
     # Catch list default values here and redirect to default_factory
     if isinstance(default, list):
         default_copy = copy(default)
-        default_factory = lambda: default_copy
+        default_factory = lambda: default_copy  # noqa: E731
         default = dataclasses.MISSING
     return dataclasses.field(metadata=metadata, default=default, default_factory=default_factory, **kwargs)
 

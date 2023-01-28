@@ -1,1 +1,1 @@
-from .parsing import dargparse, dArg, dArgParser, Choice
+from .parsing import Choice, dArg, dargparse, dArgParser  # noqa F401
