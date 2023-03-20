@@ -314,7 +314,7 @@ class dArgParser(ArgumentParser):
         self,
         args=None,
         return_remaining_strings=False,
-        look_for_args_file=True,
+        look_for_args_file=False,
         args_filename=None,
         args_file_flag=None,
     ) -> Tuple[DataClass, ...]:
@@ -372,6 +372,8 @@ class dArgParser(ArgumentParser):
             for args_file in args_files:
                 if args_file.exists():
                     file_args += args_file.read_text().split()
+                else:
+                    print(f"dargparser | Warning: args file {args_file} does not exist. Ignoring it.")
 
             # in case of duplicate arguments the last one has precedence
             # args specified via the command line should overwrite args from files, so we add them last
