@@ -19,8 +19,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional
 
-from src.dargparser import dArgParser
-from src.dargparser.helpers import make_choice_type_function, string_to_bool
+from dargparser import dArgParser
+from dargparser.helpers import make_choice_type_function, string_to_bool
 
 
 try:
