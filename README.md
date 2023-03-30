@@ -11,7 +11,9 @@ Install `dargparser` with `pip`:
 ```sh
 pip install dargparser
 ```
+
 or `conda`/`mamba`:
+
 ```sh
 conda install -c conda-forge dargparser
 ```
