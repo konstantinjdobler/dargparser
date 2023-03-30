@@ -59,7 +59,7 @@ except ImportError:
 Choice = Literal
 DataClass = NewType("DataClass", Any)
 DataClassType = NewType("DataClassType", Any)
-DataclassOrDataclassTuple = TypeVar("DataclassOrDataclassTuple", bound=Union[DataClass, Tuple[DataClass, ...]])
+DataclassOrDataclassTuple = TypeVar("DataclassOrDataclassTuple")
 
 
 def dargparse(dataclasses: DataclassOrDataclassTuple, config_flag: str = "--cfg") -> DataclassOrDataclassTuple:
