@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Literal
 
-from dargparser import Choice, dArg, dargparse
+from src.dargparser import Choice, dArg, dargparse
 
 # flake8 doesn't like Choice with strings, you can use Literal instead.
 # flake8: noqa
@@ -11,7 +12,7 @@ from dargparser import Choice, dArg, dargparse
 class Args:
     epochs: int
     learning_rate: float = dArg(aliases="--lr", help="Required argument (no default).")
-    data_path: str = dArg(default="./data/", aliases=["--data", "-d"])
+    data_path: Path = dArg(default="./data/", aliases=["--data", "-d"], parsing_function=lambda x: Path(x).resolve())
     # str | None syntax is only available in Python >=3.10. Use Optional[str] for older versions.
     extra_data: str | None = dArg(default=None)
     cuda: bool = dArg(default=True, help="We automatically create a `--no_<arg>` flag for bools.")
@@ -19,6 +20,9 @@ class Args:
     some_list_arg: list[int] = dArg(default=[1, 2, 3])
     evaluation_datasets: list[Choice["xnli", "tydiqa", "wikiann", "squad"]] = dArg(
         default=["xnli", "wikiann"], help="Select arbitrary number of datasets to evaluate on."
+    )
+    complex_arg: tuple[int, list[str]] = dArg(
+        default=(1, ["a", "b"]), parsing_function=lambda x: (int(x.split(",")[0]), x.split(",")[1:])
     )
 
 
