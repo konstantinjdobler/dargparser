@@ -88,6 +88,7 @@ def dArg(
     help: str = None,
     default_factory: Callable[[], Any] = dataclasses.MISSING,
     metadata: dict = None,
+    parsing_function: Callable[[str], Any] = None,
     **kwargs,
 ) -> dataclasses.Field:
     """
@@ -131,6 +132,8 @@ def dArg(
         metadata["aliases"] = aliases
     if help is not None:
         metadata["help"] = help
+    if parsing_function is not None:
+        metadata["parsing_function"] = parsing_function
 
     # Catch list default values here and redirect to default_factory
     if isinstance(default, list):
@@ -180,6 +183,11 @@ class dArgParser(ArgumentParser):
                 "Unresolved type detected, which should have been done with the help of "
                 "`typing.get_type_hints` method by default"
             )
+
+        parsing_function = kwargs.pop("parsing_function", None)
+        if parsing_function is not None:
+            parsing_function_return_type = field.type
+            field.type = parsing_function
 
         aliases = kwargs.pop("aliases", [])
         if isinstance(aliases, str):
@@ -277,6 +285,8 @@ class dArgParser(ArgumentParser):
             else:
                 kwargs["required"] = True
             type_str = field.type.__name__.upper()
+            if parsing_function is not None:
+                type_str = parsing_function_return_type.__name__.upper()
 
         parser.add_argument(field_name, *aliases, **kwargs, metavar=type_str)
 
