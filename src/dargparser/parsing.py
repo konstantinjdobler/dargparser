@@ -383,7 +383,7 @@ class dArgParser(ArgumentParser):
                 if args_file.exists():
                     file_args += args_file.read_text().split()
                 else:
-                    print(f"dargparser | Warning: args file {args_file} does not exist. Ignoring it.")
+                    raise ValueError(f"dargparser | Error: specified args file {args_file} does not exist.")
 
             # in case of duplicate arguments the last one has precedence
             # args specified via the command line should overwrite args from files, so we add them last
