@@ -33,6 +33,7 @@ from typing import (
     TypeVar,
     Union,
     get_type_hints,
+    overload,
 )
 
 from .helpers import (
@@ -80,17 +81,43 @@ def dargparse(dataclasses: DataclassOrDataclassTuple, config_flag: str = "--cfg"
     else:
         return result
 
+DefaultValue = TypeVar("DefaultValue")
 
+@overload
 def dArg(
     *,
-    default: Any = dataclasses.MISSING,
+    default: DefaultValue = dataclasses.MISSING,
     aliases: Union[str, List[str]] = None,
     help: str = None,
     default_factory: Callable[[], Any] = dataclasses.MISSING,
     metadata: dict = None,
     parsing_function: Callable[[str], Any] = None,
     **kwargs,
-) -> dataclasses.Field:
+) -> DefaultValue:
+    ...
+
+@overload
+def dArg(
+    *,
+    aliases: Union[str, List[str]] = None,
+    help: str = None,
+    default_factory: Callable[[], Any] = dataclasses.MISSING,
+    metadata: dict = None,
+    parsing_function: Callable[[str], Any] = None,
+    **kwargs,
+) -> Any:
+    ...
+
+def dArg(
+    *,
+    default: DefaultValue = dataclasses.MISSING,
+    aliases: Union[str, List[str]] = None,
+    help: str = None,
+    default_factory: Callable[[], Any] = dataclasses.MISSING,
+    metadata: dict = None,
+    parsing_function: Callable[[str], Any] = None,
+    **kwargs,
+) -> DefaultValue:
     """
     Example using the `dArgParser` and `dArg`:
     ```
