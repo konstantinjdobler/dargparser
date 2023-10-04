@@ -131,7 +131,7 @@ class DataArgs:
     ...
 
 # the arguments parsed from the CLI are now split into the respective variables
-training_args, model_args, data_args = dargparse(TrainingArgs, ModelArgs, DataArgs)
+training_args, model_args, data_args = dargparse((TrainingArgs, ModelArgs, DataArgs))
 ```
 
 </details>
