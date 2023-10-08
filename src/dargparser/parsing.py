@@ -210,7 +210,10 @@ class dArgParser(ArgumentParser):
         # field.metadata is not used at all by Data Classes,
         # it is provided as a third-party extension mechanism.
         if isinstance(field.type, str):
-            raise RuntimeError("Unresolved type detected, which should have been done with the help of " "`typing.get_type_hints` method by default")
+            raise RuntimeError(
+                "Unresolved type detected, which should have been done with the help of "
+                "`typing.get_type_hints` method by default"
+            )
 
         parsing_function = kwargs.pop("parsing_function", None)
         if parsing_function is not None:
